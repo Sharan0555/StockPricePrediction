@@ -1,0 +1,35 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: Uvicorn",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "cd \"${workspaceFolder}/backend\" && uvicorn app.main:app --host 0.0.0.0 --port 8001"
+    },
+    {
+      "name": "Frontend: Next Dev",
+      "type": "pwa-node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/frontend",
+      "env": {
+        "WATCHPACK_POLLING": "true",
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "Local:\\s+(https?://localhost:\\d+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Start App",
+      "configurations": ["Backend: Uvicorn", "Frontend: Next Dev"]
+    }
+  ]
+}

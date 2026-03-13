@@ -1,0 +1,22 @@
+{
+  "codex.test@example.com": {
+    "email": "codex.test@example.com",
+    "password_hash": "$pbkdf2-sha256$29000$lPLem/Ne691bqxXivLe2tg$pco7HqqxvdROoOS8ute4nJ7Duca2cF8WmGAvNVccl04"
+  },
+  "codex.loginfix@example.com": {
+    "email": "codex.loginfix@example.com",
+    "password_hash": "$pbkdf2-sha256$29000$rvVeaw1hjPEeAyBk7L333g$YdlAov0Pf/0ebxrVziJWrXZ2br0IRd6r70Fa7anbThI"
+  },
+  "sharanpatil630@gmail.com": {
+    "email": "sharanpatil630@gmail.com",
+    "password_hash": "$pbkdf2-sha256$29000$ujdmLIWQUooRghBCKGXs3Q$54l6WEs9ccVjBjtQSP7T.i.yyxu6x/B3GDRM3.4WNxE"
+  },
+  "sharanpail630@gmail.com": {
+    "email": "sharanpail630@gmail.com",
+    "password_hash": "$pbkdf2-sha256$29000$eq.1FqK0lrL2HgOgdK713g$WkbVc0ptZbaohrubi2VQVvrWpc1FxeNXbBThSG.4xfw"
+  },
+  "sharanpatil630@gmai.com": {
+    "email": "sharanpatil630@gmai.com",
+    "password_hash": "$pbkdf2-sha256$29000$JCRkzHkvJUQIwbhXSillzA$IyCq2n3tlEGP/HAhUEPz6NnFkbZ3Tw9wTkhWoMPEPKY"
+  }
+}
