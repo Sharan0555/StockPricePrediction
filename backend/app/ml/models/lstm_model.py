@@ -33,9 +33,16 @@ class LSTMStockModel:
 
     def predict_sequence(self, series: np.ndarray) -> float:
         if series.ndim == 1:
-            series = series.reshape(1, -1, 1)
+            window = series.reshape(1, -1)
         elif series.ndim == 2:
-            series = series.reshape(series.shape[0], series.shape[1], 1)
-        preds: Any = self.model.predict(series, verbose=0)
-        return float(preds[0][0])
+            window = series
+        else:
+            window = series.reshape(series.shape[0], series.shape[1])
 
+        last = window[:, -1]
+        scale = np.where(last == 0, 1.0, last)
+        normalized = window / scale[:, None]
+        normalized = normalized.reshape(normalized.shape[0], normalized.shape[1], 1)
+        preds: Any = self.model.predict(normalized, verbose=0)
+        predicted = preds[:, 0] * scale
+        return float(predicted[0])

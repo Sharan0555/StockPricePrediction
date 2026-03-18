@@ -925,9 +925,21 @@ INR_TOP_100 = [
 
 INR_SYMBOLS = {s["symbol"] for s in INR_TOP_100}
 
+def _looks_like_inr_symbol(symbol: str) -> bool:
+    sym = symbol.upper()
+    if sym in INR_SYMBOLS:
+        return True
+    return sym.endswith(".NS") or sym.endswith(".NSE") or sym.endswith(".BSE")
+
 def _alpha_candidates(symbol: str) -> list[str]:
-    if "." in symbol:
-        return [symbol]
+    sym = symbol.upper()
+    # Normalize common India suffixes to Alpha Vantage expected format.
+    if sym.endswith(".NS"):
+        return [sym.replace(".NS", ".NSE")]
+    if sym.endswith(".BO"):
+        return [sym.replace(".BO", ".BSE")]
+    if "." in sym:
+        return [sym]
     suffixes: list[str] = []
     primary = settings.ALPHAVANTAGE_INR_SUFFIX or ""
     if primary:
@@ -1097,24 +1109,39 @@ def get_inr_exchange_rate(
 @router.get("/{symbol}/quote")
 def get_realtime_price(
     symbol: str,
+    allow_local: bool = Query(True),
     service: FinnhubService = Depends(get_finnhub_service),
     alpha: AlphaVantageService = Depends(get_alpha_vantage_service),
     local_data: LocalDataService = Depends(get_local_data_service),
 ) -> dict:
     sym = symbol.upper()
-    currency = "INR" if sym in INR_SYMBOLS else "USD"
+    is_inr = _looks_like_inr_symbol(sym)
+    currency = "INR" if is_inr else "USD"
     if settings.LOCAL_DATA_ONLY:
+        if not allow_local:
+            raise HTTPException(
+                status_code=503,
+                detail="Local-only mode is enabled; live data is unavailable.",
+            )
         quote = local_data.get_quote(sym, currency)
         return {"symbol": sym, "quote": quote, "source": "local"}
 
-    if sym in INR_SYMBOLS:
+    if is_inr:
         if settings.ALPHAVANTAGE_API_KEY:
             try:
                 candidates = _alpha_candidates(sym)
                 quote = alpha.get_first_quote(candidates)
                 return {"symbol": sym, "quote": quote, "source": "alpha_vantage"}
-            except Exception:
-                pass
+            except Exception as exc:
+                if not allow_local:
+                    raise HTTPException(
+                        status_code=502, detail=f"Alpha Vantage error: {exc}"
+                    ) from exc
+        if not allow_local:
+            raise HTTPException(
+                status_code=502,
+                detail="Alpha Vantage unavailable and local fallback disabled.",
+            )
         quote = local_data.get_quote(sym, currency)
         return {"symbol": sym, "quote": quote, "source": "local"}
 
@@ -1122,9 +1149,22 @@ def get_realtime_price(
         try:
             quote = service.get_realtime_quote(sym)
             return {"symbol": sym, "quote": quote, "source": "finnhub"}
-        except Exception:
-            pass
+        except Exception as exc:
+            if not allow_local:
+                raise HTTPException(
+                    status_code=502, detail=f"Finnhub error: {exc}"
+                ) from exc
+    elif not allow_local:
+        raise HTTPException(
+            status_code=502,
+            detail="FINNHUB_API_KEY is not set and local fallback disabled.",
+        )
 
+    if not allow_local:
+        raise HTTPException(
+            status_code=502,
+            detail="Live data unavailable and local fallback disabled.",
+        )
     quote = local_data.get_quote(sym, currency)
     return {"symbol": sym, "quote": quote, "source": "local"}
 
@@ -1134,6 +1174,7 @@ def get_history(
     symbol: str,
     days: int = Query(90, ge=1, le=3650),
     resolution: str = Query("D"),
+    allow_local: bool = Query(True),
     service: FinnhubService = Depends(get_finnhub_service),
     alpha: AlphaVantageService = Depends(get_alpha_vantage_service),
     local_data: LocalDataService = Depends(get_local_data_service),
@@ -1146,6 +1187,7 @@ def get_history(
     - fallback: empty list
     """
     sym = symbol.upper()
+    is_inr = _looks_like_inr_symbol(sym)
 
     # 1) MongoDB lookup
     closes: list[dict] = []
@@ -1167,13 +1209,18 @@ def get_history(
 
     # Local-only mode: generate deterministic synthetic data and cache to Mongo.
     if settings.LOCAL_DATA_ONLY:
+        if not allow_local:
+            raise HTTPException(
+                status_code=503,
+                detail="Local-only mode is enabled; live data is unavailable.",
+            )
         currency = "INR" if sym in INR_SYMBOLS else "USD"
         series = local_data.get_series(sym, currency, days)
         _store_history(sym, series, "local")
         return {"symbol": sym, "source": "local", "series": series}
 
     # 2) Alpha Vantage daily series for INR symbols
-    if sym in INR_SYMBOLS:
+    if is_inr:
         if settings.ALPHAVANTAGE_API_KEY:
             try:
                 candidates = _alpha_candidates(sym)
@@ -1196,8 +1243,16 @@ def get_history(
                     return {"symbol": sym, "source": "alpha_vantage", "series": series}
                 if last_error:
                     raise last_error
-            except Exception:
-                pass
+            except Exception as exc:
+                if not allow_local:
+                    raise HTTPException(
+                        status_code=502, detail=f"Alpha Vantage error: {exc}"
+                    ) from exc
+        if not allow_local:
+            raise HTTPException(
+                status_code=502,
+                detail="Alpha Vantage unavailable and local fallback disabled.",
+            )
         currency = "INR"
         series = local_data.get_series(sym, currency, days)
         _store_history(sym, series, "local")
@@ -1216,8 +1271,16 @@ def get_history(
                 series = [{"t": int(t), "c": float(c)} for t, c in zip(data["t"], data["c"])]
                 _store_history(sym, series, "finnhub")
                 return {"symbol": sym, "source": "finnhub", "series": series}
-        except Exception:
-            pass
+        except Exception as exc:
+            if not allow_local:
+                raise HTTPException(
+                    status_code=502, detail=f"Finnhub error: {exc}"
+                ) from exc
+    elif not allow_local:
+        raise HTTPException(
+            status_code=502,
+            detail="FINNHUB_API_KEY is not set and local fallback disabled.",
+        )
 
     # 4) Alpha Vantage fallback for non-INR symbols
     if settings.ALPHAVANTAGE_API_KEY:
@@ -1228,10 +1291,23 @@ def get_history(
                     series = series[-days:]
                 _store_history(sym, series, "alpha_vantage")
                 return {"symbol": sym, "source": "alpha_vantage", "series": series}
-        except Exception:
-            pass
+        except Exception as exc:
+            if not allow_local:
+                raise HTTPException(
+                    status_code=502, detail=f"Alpha Vantage error: {exc}"
+                ) from exc
+    elif not allow_local:
+        raise HTTPException(
+            status_code=502,
+            detail="ALPHAVANTAGE_API_KEY is not set and local fallback disabled.",
+        )
 
-    currency = "INR" if sym in INR_SYMBOLS else "USD"
+    if not allow_local:
+        raise HTTPException(
+            status_code=502,
+            detail="Live data unavailable and local fallback disabled.",
+        )
+    currency = "INR" if is_inr else "USD"
     series = local_data.get_series(sym, currency, days)
     _store_history(sym, series, "local")
     return {"symbol": sym, "source": "local", "series": series}

@@ -46,9 +46,11 @@ class Settings(BaseSettings):
 
     LOCAL_DATA_ONLY: bool = Field(default=False, validation_alias="LOCAL_DATA_ONLY")
 
+    GOOGLE_CLIENT_ID: str = Field(default="", validation_alias="GOOGLE_CLIENT_ID")
+
     model_config = SettingsConfigDict(
         case_sensitive=True,
-        env_file=".env",
+        env_file=(".env", "../.env"),
         env_file_encoding="utf-8",
     )
 

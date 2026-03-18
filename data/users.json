@@ -9,7 +9,8 @@
   },
   "sharanpatil630@gmail.com": {
     "email": "sharanpatil630@gmail.com",
-    "password_hash": "$pbkdf2-sha256$29000$ujdmLIWQUooRghBCKGXs3Q$54l6WEs9ccVjBjtQSP7T.i.yyxu6x/B3GDRM3.4WNxE"
+    "password_hash": "$pbkdf2-sha256$29000$ujdmLIWQUooRghBCKGXs3Q$54l6WEs9ccVjBjtQSP7T.i.yyxu6x/B3GDRM3.4WNxE",
+    "provider": "google"
   },
   "sharanpail630@gmail.com": {
     "email": "sharanpail630@gmail.com",
@@ -18,5 +19,13 @@
   "sharanpatil630@gmai.com": {
     "email": "sharanpatil630@gmai.com",
     "password_hash": "$pbkdf2-sha256$29000$JCRkzHkvJUQIwbhXSillzA$IyCq2n3tlEGP/HAhUEPz6NnFkbZ3Tw9wTkhWoMPEPKY"
+  },
+  "sharanpatil0555@gmail.com": {
+    "email": "sharanpatil0555@gmail.com",
+    "provider": "google"
+  },
+  "patilsharan630@gmail.com": {
+    "email": "patilsharan630@gmail.com",
+    "provider": "google"
   }
 }

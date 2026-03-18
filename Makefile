@@ -41,23 +41,23 @@ dev:
 	@echo "make dev-quick-fast"
 
 dev-backend:
-	cd backend && "$(PY)" -m pip install -r requirements.txt && "$(PY)" -m uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+	cd backend && "$(PY)" -m pip install -r requirements.txt && "$(PY)" -m uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
 
 dev-frontend:
-	cd frontend && npm install && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8001 npm run dev
+	cd frontend && npm install && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8002 npm run dev
 
 dev-parallel:
 	$(MAKE) -j2 dev-backend dev-frontend
 
 dev-backend-fast:
-	cd backend && "$(PY)" -m uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
+	cd backend && "$(PY)" -m uvicorn app.main:app --host 0.0.0.0 --port 8002 --reload
 
 dev-frontend-fast:
-	cd frontend && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8001 npm run dev
+	cd frontend && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8002 npm run dev
 
 dev-clean:
 	@lsof -nP -iTCP:3000 | awk 'NR>1 {print $$2}' | xargs -r kill || true
-	@lsof -nP -iTCP:8001 | awk 'NR>1 {print $$2}' | xargs -r kill || true
+	@lsof -nP -iTCP:8002 | awk 'NR>1 {print $$2}' | xargs -r kill || true
 	@rm -f "frontend/.next/dev/lock"
 
 dev-quick: dev-clean
