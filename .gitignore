@@ -20,3 +20,9 @@ yarn-error.log*
 
 *.log
 
+__pycache__/
+*.pyc
+.venv/
+.next/
+node_modules/
+.env
