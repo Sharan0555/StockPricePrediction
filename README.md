@@ -160,6 +160,23 @@ bash start.sh
 
 ---
 
+## Free Deployment
+
+### Backend → Render (free)
+1. Go to render.com and sign up with GitHub
+2. Click New → Blueprint → select this repo
+3. Add env vars: FINNHUB_API_KEY, ALPHAVANTAGE_API_KEY
+4. Deploy — your API will be at https://stock-prediction-api.onrender.com
+
+### Frontend → Vercel (free)
+1. Go to vercel.com and sign up with GitHub
+2. Click New Project → import this repo
+3. Set root directory to: frontend
+4. Add env var: NEXT_PUBLIC_API_URL=https://stock-prediction-api.onrender.com
+5. Deploy — your app will be at https://stock-prediction.vercel.app
+
+---
+
 ### Known Limitations
 
 ⚠️ **Educational Purpose Only**

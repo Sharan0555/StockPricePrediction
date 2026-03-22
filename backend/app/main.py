@@ -1,4 +1,5 @@
 import asyncio
+import os
 from contextlib import asynccontextmanager, suppress
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -54,28 +55,14 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    origin_regex = r"^http://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+)(:\d+)?$"
-    if settings.BACKEND_CORS_ORIGINS:
-        origins = []
-        for origin in settings.BACKEND_CORS_ORIGINS:
-            cleaned = str(origin).rstrip("/")
-            if cleaned and cleaned not in origins:
-                origins.append(cleaned)
-    else:
-        origins = []
-    if not origins:
-        origins = [
-            "http://localhost",
-            "http://127.0.0.1",
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://localhost:3001",
-            "http://127.0.0.1:3001",
-        ]
+    origins = [
+        "http://localhost:3000",
+        "https://stock-prediction.vercel.app",
+        os.getenv("FRONTEND_URL", ""),
+    ]
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
-        allow_origin_regex=origin_regex,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
