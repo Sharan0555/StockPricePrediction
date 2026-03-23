@@ -131,8 +131,8 @@ Prerequisites: Python 3.11+, Node.js 18+, PostgreSQL, MongoDB (Redis optional)
 1. **Clone the repo**
 
 ```bash
-git clone https://github.com/Sharan0555/Stock-Price-Prediction-.git
-cd Stock-Price-Prediction
+git clone https://github.com/Sharan0555/StockPricePrediction.git
+cd StockPricePrediction
 ```
 
 2. **Copy .env.example to .env and fill in API keys**
@@ -165,15 +165,16 @@ bash start.sh
 ### Backend → Render (free)
 1. Go to render.com and sign up with GitHub
 2. Click New → Blueprint → select this repo
-3. Add env vars: FINNHUB_API_KEY, ALPHAVANTAGE_API_KEY
-4. Deploy — your API will be at https://stock-prediction-api.onrender.com
+3. Add env vars: `FINNHUB_API_KEY`, `ALPHAVANTAGE_API_KEY`, and `FRONTEND_URL`
+4. Deploy — Render will assign a URL such as `https://<your-render-service>.onrender.com`
 
 ### Frontend → Vercel (free)
 1. Go to vercel.com and sign up with GitHub
 2. Click New Project → import this repo
 3. Set root directory to: frontend
-4. Add env var: NEXT_PUBLIC_API_URL=https://stock-prediction-api.onrender.com
-5. Deploy — your app will be at https://stock-prediction.vercel.app
+4. Add env var: `NEXT_PUBLIC_API_URL=https://<your-render-service>.onrender.com`
+5. Deploy — Vercel will assign a URL such as `https://<your-project>.vercel.app`
+6. Update Render `FRONTEND_URL` to your deployed Vercel URL so backend CORS allows the frontend
 
 ---
 
@@ -272,4 +273,3 @@ Contributions, issues, and feature requests are welcome!
 ### License
 
 This project is licensed under the MIT License.
-

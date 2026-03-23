@@ -73,7 +73,7 @@ git push origin v1.0.0
 
 #### Via GitHub Web Interface
 
-1. Go to https://github.com/Sharan0555/Stock-Price-Prediction-/releases
+1. Go to https://github.com/Sharan0555/StockPricePrediction/releases
 2. Click "Create a new release"
 3. Choose the tag: `v1.0.0`
 4. Release title: `Release v1.0.0`

@@ -14,8 +14,8 @@ Thank you for your interest in contributing! This document provides guidelines f
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Sharan0555/Stock-Price-Prediction-.git
-   cd Stock-Price-Prediction
+   git clone https://github.com/Sharan0555/StockPricePrediction.git
+   cd StockPricePrediction
    ```
 
 2. **Backend Setup**

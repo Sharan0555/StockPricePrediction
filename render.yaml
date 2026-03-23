@@ -11,4 +11,4 @@ services:
       - key: ALPHAVANTAGE_API_KEY
         sync: false
       - key: FRONTEND_URL
-        value: https://stock-prediction.vercel.app
+        sync: false
