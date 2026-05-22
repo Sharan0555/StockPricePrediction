@@ -193,7 +193,7 @@ def create_app() -> FastAPI:
         openapi_url="/api/openapi.json",
         lifespan=lifespan,
     )
-  app.add_middleware(
+ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://stock-price-prediction-lake.vercel.app",
