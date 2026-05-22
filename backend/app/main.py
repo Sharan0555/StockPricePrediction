@@ -193,21 +193,20 @@ def create_app() -> FastAPI:
         openapi_url="/api/openapi.json",
         lifespan=lifespan,
     )
-
-    app.add_middleware(
-        CORSMiddleware,
-       allow_origins=[
-    "https://stock-price-prediction-lake.vercel.app",
-    "https://www.stockpriceprediction.js.org",
-    "https://stockpriceprediction.js.org",
-    "http://localhost:3000",
-],
-        get_allowed_origins(),
-        allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?$",
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+  app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://stock-price-prediction-lake.vercel.app",
+        "https://www.stockpriceprediction.js.org",
+        "https://stockpriceprediction.js.org",
+        "http://localhost:3000",
+        *get_allowed_origins(),
+    ],
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
     app.include_router(routes_health.router, prefix="/api/v1/health", tags=["health"])
     app.include_router(routes_auth.router, prefix="/api/v1/auth", tags=["auth"])
